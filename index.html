@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<head>
+    <!-- fail nicely if the browser has no Javascript -->
+    <noscript><b>JavaScript must be enabled in order for you to use Google Maps.</b>
+        However, it seems JavaScript is either disabled or not supported by your browser.
+        To view Google Maps, enable JavaScript by changing your browser options, and then
+        try again.
+    </noscript>
+    
+    
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=YOUKEYHERE&sensor=false">
+        </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        var markers = [];
+        Array.prototype.remove = function(from, to) {
+            var rest = this.slice((to || from) + 1 || this.length);
+            this.length = from < 0 ? this.length + from : from;
+            return this.push.apply(this, rest);
+        };
+        var map;
+        var poly;
+        var initLat1 = 29.88828;
+        var initLon1 = -97.9239;
+        var initLat2 = 30.23534;
+        var initLon2 = -97.7646;
+        function initialize() {
+            var mapOptions = {
+                center: new google.maps.LatLng(30.04, -97.82),
+                zoom: 9,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"),
+                                      mapOptions);
+            var loc1 = new google.maps.LatLng(initLat1, initLon1);
+            var loc2 = new google.maps.LatLng(initLat2, initLon2);
+            markers.push(new google.maps.Marker({
+                                                position: loc1,
+                                                title: 'Location 1',
+                                                map: map
+                                                }));
+            markers.push(new google.maps.Marker({
+                                                position: loc2,
+                                                title: 'Location 2',
+                                                map: map
+                                                }));
+            poly = new google.maps.Polyline({
+                                            strokeColor: '#FF0000'
+                                            });
+            poly.setMap(map);
+            poly.setPath([loc1, loc2]);
+            google.maps.event.addListener(map, 'click', addLatLng);
+        };
+        function getPrecision(latlng) {
+            if (latlng < 0) {
+                return 6;
+            }
+            return 7;
+        };
+        function addLatLng(event) {
+            var path = poly.getPath();
+            var marker = new google.maps.Marker({
+                                                position: event.latLng,
+                                                title: 'Location ' + path.getLength(),
+                                                map: map
+                                                });
+            
+            markers.push(marker);
+            if (path.length < 2) {
+                path.push(event.latLng);
+                return;
+            }
+            path.removeAt(0)
+            path.push(event.latLng);
+            markers[0].setMap(null);
+            markers.remove(0);
+            if (markers[0] != null) {
+                markers[0].setTitle('Location 1');
+                var pos1 = markers[0].getPosition();
+                var pos2 = markers[1].getPosition();
+                var lat1 = pos1.lat();
+                var lng1 = pos1.lng();
+                var lat2 = pos2.lat();
+                var lng2 = pos2.lng();
+                
+                $('#lat1').val(lat1.toPrecisionFixed(getPrecision(lat1)));
+                $('#lon1').val(lng1.toPrecisionFixed(getPrecision(lng1)));
+                $('#lat2').val(lat2.toPrecisionFixed(getPrecision(lat2)));
+                $('#lon2').val(lng2.toPrecisionFixed(getPrecision(lng2)));
+                $('#calc-dist').click();
+            }
+        };
+        </script>
+</head>
+<body onload="initialize()">
+    <table>
+        <tr>
+            <td>
+                <div id="result-distance"></div>
+                <div id="map_canvas" style="width:300px; height:250px;"></div>
+            </td>
+            <tr>
+                <td>
+                    <form style="padding-top: 0px;">
+                        Lat1: &nbsp;<input style="width:80px;" type="text" name="lat1" id="lat1"> <br>
+                            Lon1: <input style="width:80px;" type="text" name="lon1" id="lon1"> <br>
+                                Lat2: &nbsp;<input style="width:80px;" type="text" name="lat2" id="lat2"> <br>
+                                    Lon2: <input style="width:80px;"type="text" name="lon2" id="lon2"> <br>
+                                        <button id="calc-dist">Calculate distance</button>
+                                        </form>
+                </td>
+                
+            </tr>
+            </table>
+</body>
+<script src="latlon.js">/* Latitude/Longitude formulae */</script>
+<script src="geo.js">/* Geodesy representation conversions */</script>
+<script>
+    $(document).ready(function() {
+                      $('#lat1').val('29.88925');
+                      $('#lon1').val('-97.9432');
+                      $('#lat2').val('30.20014');
+                      $('#lon2').val('-97.6927');
+                      $('#calc-dist').click(function() {
+                                            var lat1 = $('#lat1').val();
+                                            var lon1 = $('#lon1').val();
+                                            var p1 = new LatLon(Geo.parseDMS(lat1), Geo.parseDMS(lon1));
+                                            var p2 = new LatLon(Geo.parseDMS($('#lat2').val()), Geo.parseDMS($('#lon2').val()));
+                                            var distanceKm = p1.distanceTo(p2);
+                                            var distanceYd = distanceKm * 1093.61;
+                                            var distanceMi = distanceYd * 0.000568182;
+                                            var midPoint = p1.midpointTo(p2);
+                                            $('#result-distance').html('</br>' + distanceKm+' km </br>' + 
+                                                                       (distanceYd * 3).toPrecisionFixed(8) + ' feet </br>' +
+                                                                       distanceYd.toPrecisionFixed(8) + ' yards </br>' +
+                                                                       distanceMi.toPrecisionFixed(4) + ' miles </br>' +
+                                                                       midPoint.lat().toPrecisionFixed(4) + ', ' + midPoint.lon().toPrecisionFixed(4) + ' is the midpoint </br>');
+                                            var loc1 = new google.maps.LatLng(lat1, lon1);
+                                            var loc2 = new google.maps.LatLng(p2.lat(), p2.lon());
+                                            if (map) {
+                                            map.panTo(new google.maps.LatLng(midPoint.lat(),midPoint.lon()));
+                                            }
+                                            return false;
+                                            });
+                      $('#calc-dist').click();
+                      });
+    </script>
+</html>
