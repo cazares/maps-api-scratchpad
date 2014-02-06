@@ -9,7 +9,7 @@
     
     
     <script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=YOUKEYHERE&sensor=false">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0yRipJp_BQDCwiIUEY9Eu4n7P9JyaoSU&sensor=false">
         </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
     <script type="text/javascript">
@@ -21,14 +21,14 @@
         };
         var map;
         var poly;
-        var initLat1 = 30.22110;
-    	var initLon1 = -97.7618;
-    	var initLat2 = 29.87876;
-    	var initLon2 = -97.9459;
+        initLat1 = 30.26700;
+    	initLon1 = -97.7430;
+    	initLat2 = 30.25202;
+    	initLon2 = -97.7487;
         function initialize() {
             var mapOptions = {
-                center: new google.maps.LatLng(30.04, -97.82),
-                zoom: 9,
+                center: new google.maps.LatLng(30.26263, -97.7433),
+                zoom: 13,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             map = new google.maps.Map(document.getElementById("map_canvas"),
@@ -118,10 +118,10 @@
 <script src="geo.js">/* Geodesy representation conversions */</script>
 <script>
     $(document).ready(function() {
-                      $('#lat1').val('29.88925');
-                      $('#lon1').val('-97.9432');
-                      $('#lat2').val('30.20014');
-                      $('#lon2').val('-97.6927');
+                      $('#lat1').val(initLat1);
+                      $('#lon1').val(initLon1);
+                      $('#lat2').val(initLat2);
+                      $('#lon2').val(initLon2);
                       $('#calc-dist').click(function() {
                                             var lat1 = $('#lat1').val();
                                             var lon1 = $('#lon1').val();
