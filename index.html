@@ -39,10 +39,10 @@
 <script src="geo.js">/* Geodesy representation conversions */</script>
 <script>
     $(document).ready(function() {
-        $('#lat1').val(initLat1);
-        $('#lon1').val(initLon1);
-        $('#lat2').val(initLat2);
-        $('#lon2').val(initLon2);
+        $('#lat1').val(initialCoordinates[0].latitude);
+        $('#lon1').val(initialCoordinates[0].longitude);
+        $('#lat2').val(initialCoordinates[1].latitude);
+        $('#lon2').val(initialCoordinates[1].longitude);
         $('#calc-dist').click(function() {
             var lat1 = $('#lat1').val();
             var lon1 = $('#lon1').val();

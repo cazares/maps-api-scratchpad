@@ -1,18 +1,22 @@
-var markers = [];
-
 Array.prototype.remove = function(from, to) {
     var rest = this.slice((to || from) + 1 || this.length);
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
 };
 
+function Coordinate(latitude, longitude) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+};
+
+initialCoordinates = new Array();
+initialCoordinates.push(new Coordinate(30.26700, -97.7430));
+initialCoordinates.push(new Coordinate(30.25202, -97.7487));
+
+var mapCenter = new Coordinate(30.26263, -97.7433);
+var markers = new Array();
 var map;
-var poly;
-initLat1 = 30.26700;
-initLon1 = -97.7430;
-initLat2 = 30.25202;
-initLon2 = -97.7487;
-var mapCenter = { latitude: 30.26263, longitude: -97.7433 };
+var lineBetweenMarkers;
 
 function initialize() {
     var mapOptions = {
@@ -22,8 +26,10 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),
                               mapOptions);
-    var loc1 = new google.maps.LatLng(initLat1, initLon1);
-    var loc2 = new google.maps.LatLng(initLat2, initLon2);
+    var loc1 = new google.maps.LatLng(initialCoordinates[0].latitude, 
+                                      initialCoordinates[0].longitude);
+    var loc2 = new google.maps.LatLng(initialCoordinates[1].latitude, 
+                                      initialCoordinates[1].longitude);
     markers.push(new google.maps.Marker({
                                         position: loc1,
                                         title: 'Location 1',
@@ -34,11 +40,11 @@ function initialize() {
                                         title: 'Location 2',
                                         map: map
                                         }));
-    poly = new google.maps.Polyline({
+    lineBetweenMarkers = new google.maps.Polyline({
                                     strokeColor: '#FF0000'
                                     });
-    poly.setMap(map);
-    poly.setPath([loc1, loc2]);
+    lineBetweenMarkers.setMap(map);
+    lineBetweenMarkers.setPath([loc1, loc2]);
     google.maps.event.addListener(map, 'click', addLatLng);
 };
 
@@ -50,7 +56,7 @@ function getPrecision(latlng) {
 };
 
 function addLatLng(event) {
-    var path = poly.getPath();
+    var path = lineBetweenMarkers.getPath();
     var marker = new google.maps.Marker({
                                         position: event.latLng,
                                         title: 'Location ' + path.getLength(),
