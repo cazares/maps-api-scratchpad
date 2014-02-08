@@ -8,15 +8,16 @@ Array.prototype.remove = function(from, to) {
 
 var map;
 var poly;
-initLat1 = 30.22110;
-initLon1 = -97.7618;
-initLat2 = 29.87876;
-initLon2 = -97.9459;
+initLat1 = 30.26700;
+initLon1 = -97.7430;
+initLat2 = 30.25202;
+initLon2 = -97.7487;
+var mapCenter = { latitude: 30.26263, longitude: -97.7433 };
 
 function initialize() {
     var mapOptions = {
-        center: new google.maps.LatLng(30.04, -97.82),
-        zoom: 9,
+        center: new google.maps.LatLng(mapCenter.latitude, mapCenter.longitude),
+        zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),
