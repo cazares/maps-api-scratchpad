@@ -7,6 +7,11 @@ Array.prototype.remove = function(from, to) {
 function Coordinate(latitude, longitude) {
     this.latitude = latitude;
     this.longitude = longitude;
+    this.round = function() {
+        this.latitude = this.latitude.toPrecisionFixed(getPrecision(this.latitude));
+        this.longitude = this.longitude.toPrecisionFixed(getPrecision(this.longitude));
+        return this;
+    }
 };
 
 initialCoordinates = new Array();
@@ -26,25 +31,30 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),
                               mapOptions);
-    var loc1 = new google.maps.LatLng(initialCoordinates[0].latitude, 
-                                      initialCoordinates[0].longitude);
-    var loc2 = new google.maps.LatLng(initialCoordinates[1].latitude, 
-                                      initialCoordinates[1].longitude);
+
+    var firstLocation = new google.maps.LatLng(initialCoordinates[0].latitude, 
+                                               initialCoordinates[0].longitude);
+    var secondLocation = new google.maps.LatLng(initialCoordinates[1].latitude, 
+                                                initialCoordinates[1].longitude);
+
     markers.push(new google.maps.Marker({
-                                        position: loc1,
-                                        title: 'Location 1',
-                                        map: map
+                                            position: firstLocation,
+                                            title: 'Location 1',
+                                            map: map
                                         }));
+
     markers.push(new google.maps.Marker({
-                                        position: loc2,
-                                        title: 'Location 2',
-                                        map: map
+                                            position: secondLocation,
+                                            title: 'Location 2',
+                                            map: map
                                         }));
+
     lineBetweenMarkers = new google.maps.Polyline({
-                                    strokeColor: '#FF0000'
-                                    });
+                                                    strokeColor: '#FF0000'
+                                                  });
+
     lineBetweenMarkers.setMap(map);
-    lineBetweenMarkers.setPath([loc1, loc2]);
+    lineBetweenMarkers.setPath([firstLocation, secondLocation]);
     google.maps.event.addListener(map, 'click', addLatLng);
 };
 
@@ -58,9 +68,9 @@ function getPrecision(latlng) {
 function addLatLng(event) {
     var path = lineBetweenMarkers.getPath();
     var marker = new google.maps.Marker({
-                                        position: event.latLng,
-                                        title: 'Location ' + path.getLength(),
-                                        map: map
+                                            position: event.latLng,
+                                            title: 'Location ' + path.getLength(),
+                                            map: map
                                         });
     
     markers.push(marker);
@@ -72,19 +82,19 @@ function addLatLng(event) {
     path.push(event.latLng);
     markers[0].setMap(null);
     markers.remove(0);
+    
     if (markers[0] != null) {
         markers[0].setTitle('Location 1');
         var pos1 = markers[0].getPosition();
         var pos2 = markers[1].getPosition();
-        var lat1 = pos1.lat();
-        var lng1 = pos1.lng();
-        var lat2 = pos2.lat();
-        var lng2 = pos2.lng();
+        var newCoordinates = new Array();
+        newCoordinates.push((new Coordinate(pos1.lat(), pos1.lng())).round());
+        newCoordinates.push((new Coordinate(pos2.lat(), pos2.lng())).round());
         
-        $('#lat1').val(lat1.toPrecisionFixed(getPrecision(lat1)));
-        $('#lon1').val(lng1.toPrecisionFixed(getPrecision(lng1)));
-        $('#lat2').val(lat2.toPrecisionFixed(getPrecision(lat2)));
-        $('#lon2').val(lng2.toPrecisionFixed(getPrecision(lng2)));
+        $('#lat1').val(newCoordinates[0].latitude);
+        $('#lon1').val(newCoordinates[0].longitude);
+        $('#lat2').val(newCoordinates[1].latitude);
+        $('#lon2').val(newCoordinates[1].longitude);
         $('#calc-dist').click();
     }
 };
