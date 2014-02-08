@@ -6,6 +6,6 @@ So far, this is just a simple page that calculates distance between two GPS coor
 
 Note: you must generate your own Google Maps API key from: https://developers.google.com/maps/
 
-This page is sized for a mobile browser. But it currently doesn't perform that well on Android 2.3.
-
 A live demo can be found here: http://cazares.github.io/maps-api-scratchpad/
+
+Click around on the map to move the markers, the page will automatically recalculate distances on every click. Or you can enter your own coordinates and click the 'calculate distance' button. Page currently sized for a mobile browser. 
